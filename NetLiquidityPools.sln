@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetLiquidityPools.Console", "NetLiquidityPools.Console\NetLiquidityPools.Console.csproj", "{2C1026B4-B536-4B90-AFDC-984ECFEF0AA8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetLiquidityPools.Interface", "NetLiquidityPools.Interface\NetLiquidityPools.Interface.csproj", "{C36A78FB-740E-4F26-A07F-F2C0AA260524}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetLiquidityPools.Test", "NetLiquidityPools.Test\NetLiquidityPools.Test.csproj", "{E14B6544-1D66-4118-8243-8F95411C2B02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetLiquidityPools.Uniswap.V3", "NetLiquidityPools.Uniswap.V3\NetLiquidityPools.Uniswap.V3.csproj", "{56F5B245-1A72-4F25-966A-9C9075387268}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetLiquidityPools.Factory", "NetLiquidityPools.Factory\NetLiquidityPools.Factory.csproj", "{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C1026B4-B536-4B90-AFDC-984ECFEF0AA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C1026B4-B536-4B90-AFDC-984ECFEF0AA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C1026B4-B536-4B90-AFDC-984ECFEF0AA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C1026B4-B536-4B90-AFDC-984ECFEF0AA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C36A78FB-740E-4F26-A07F-F2C0AA260524}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C36A78FB-740E-4F26-A07F-F2C0AA260524}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C36A78FB-740E-4F26-A07F-F2C0AA260524}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C36A78FB-740E-4F26-A07F-F2C0AA260524}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E14B6544-1D66-4118-8243-8F95411C2B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E14B6544-1D66-4118-8243-8F95411C2B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E14B6544-1D66-4118-8243-8F95411C2B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E14B6544-1D66-4118-8243-8F95411C2B02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56F5B245-1A72-4F25-966A-9C9075387268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56F5B245-1A72-4F25-966A-9C9075387268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56F5B245-1A72-4F25-966A-9C9075387268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56F5B245-1A72-4F25-966A-9C9075387268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2A9B14AE-4F60-404C-9CB0-C60AF0F1B793}
+	EndGlobalSection
+EndGlobal
