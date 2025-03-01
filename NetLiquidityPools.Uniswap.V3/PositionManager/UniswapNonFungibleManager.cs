@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,5 +90,20 @@ namespace NetLiquidityPools.Uniswap.V3.PositionManager
 
         }
 
+
+        internal async Task<PositionsOutput?> Positions( BigInteger nPositionId )
+        {
+            var oFunction = new PositionsFunction()
+            {
+                TokenId = nPositionId
+            };
+
+            var oWeb3 = CreateClient();
+
+            var oHandler = oWeb3.Eth.GetContractQueryHandler<PositionsFunction>();
+            var oResult = await oHandler.QueryDeserializingToObjectAsync<PositionsOutput>(oFunction, Address);
+            return oResult;
+
+        }
     }
 }

@@ -25,13 +25,30 @@ namespace NetLiquidityPools.Uniswap.V3
             if (oBalance == null) return null;
             BigInteger oIndex = oBalance.Value;
             List<ILiquidityPool> aFound = new List<ILiquidityPool>();   
-            while( aFound.Count < 10 && oIndex > 0 )
+
+
+            List<Task<BigInteger>> aTasks = new List<Task<BigInteger>>();
+            int nDone = 0;
+            while( nDone < 5 && oIndex > 0 )
             {
                 oIndex--;
-                BigInteger? oId = await m_oPositionManager.TokenOfOwner(strAddress, oIndex);
-                if (oId == null) break;
-                aFound.Add(new UniswapLiquidityPool(this, oId.Value));
+                aTasks.Add(m_oPositionManager.TokenOfOwner(strAddress, oIndex));
+                nDone++;    
             }
+
+            await Task.WhenAll(aTasks); 
+            foreach (var oTask in aTasks) 
+            { 
+                if( oTask.IsCompleted) aFound.Add( new UniswapLiquidityPool(this, oTask.Result));
+            }
+
+            List<Task> aTasksRefresh = new List<Task>();    
+
+            foreach (var oPool in aFound  ) 
+            {
+                aTasksRefresh.Add(oPool.Refresh());
+            }
+            await Task.WhenAll(aTasksRefresh);
 
             return aFound.ToArray();
         }
