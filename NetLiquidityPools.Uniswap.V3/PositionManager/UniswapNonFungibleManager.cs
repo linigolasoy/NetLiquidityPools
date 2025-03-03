@@ -1,13 +1,6 @@
-﻿using Nethereum.Web3;
+﻿using CryptoDexCommon.Internal;
 using NetLiquidityPools.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Reflection;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetLiquidityPools.Uniswap.V3.PositionManager
 {
@@ -20,12 +13,14 @@ namespace NetLiquidityPools.Uniswap.V3.PositionManager
 
 
         private static Dictionary<NetworkType, string>? m_aAddresses = null;
-        public UniswapNonFungibleManager(ICryptoSetup oSetup)
+
+        private IWeb3Client Client { get; }
+        public UniswapNonFungibleManager(IWeb3Client oClient)
         {
-            Setup = oSetup;
+            Client = oClient;
             CreateAddresses();
-            if (m_aAddresses == null || !m_aAddresses.ContainsKey(oSetup.NetworkType)) throw new Exception("No adress found");
-            Address = m_aAddresses[oSetup.NetworkType];
+            if (m_aAddresses == null || !m_aAddresses.ContainsKey(Client.Setup.NetworkType)) throw new Exception("No adress found");
+            Address = m_aAddresses[Client.Setup.NetworkType];
         }
 
         private static void CreateAddresses()
@@ -37,14 +32,9 @@ namespace NetLiquidityPools.Uniswap.V3.PositionManager
         }
 
 
-        internal ICryptoSetup Setup { get; }
         internal string Address { get; }
 
 
-        private Web3 CreateClient()
-        {
-            return new Nethereum.Web3.Web3(Setup.Web3Url);
-        }
 
 
         /// <summary>
@@ -60,9 +50,8 @@ namespace NetLiquidityPools.Uniswap.V3.PositionManager
                 Owner = strAddress,
             };
 
-            var oWeb3 = CreateClient(); 
 
-            var balanceHandler = oWeb3.Eth.GetContractQueryHandler<BalanceOfFunction>();
+            var balanceHandler = Client.Web3Client.Eth.GetContractQueryHandler<BalanceOfFunction>();
             var oBalance = await balanceHandler.QueryAsync<BigInteger>(Address, balanceOfFunctionMessage);
             return oBalance;
         }
@@ -82,9 +71,8 @@ namespace NetLiquidityPools.Uniswap.V3.PositionManager
                 Index = nIndex  
             };
 
-            var oWeb3 = CreateClient();
 
-            var oHandler = oWeb3.Eth.GetContractQueryHandler<TokenOfOwnerFunction>();
+            var oHandler = Client.Web3Client.Eth.GetContractQueryHandler<TokenOfOwnerFunction>();
             var oResult = await oHandler.QueryAsync<BigInteger>(Address, oFunction);
             return oResult;
 
@@ -98,9 +86,9 @@ namespace NetLiquidityPools.Uniswap.V3.PositionManager
                 TokenId = nPositionId
             };
 
-            var oWeb3 = CreateClient();
 
-            var oHandler = oWeb3.Eth.GetContractQueryHandler<PositionsFunction>();
+
+            var oHandler = Client.Web3Client.Eth.GetContractQueryHandler<PositionsFunction>();
             var oResult = await oHandler.QueryDeserializingToObjectAsync<PositionsOutput>(oFunction, Address);
             return oResult;
 

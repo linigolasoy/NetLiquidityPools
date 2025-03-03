@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetLiquidityPools.Console",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetLiquidityPools.Interface", "NetLiquidityPools.Interface\NetLiquidityPools.Interface.csproj", "{C36A78FB-740E-4F26-A07F-F2C0AA260524}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetLiquidityPools.Test", "NetLiquidityPools.Test\NetLiquidityPools.Test.csproj", "{E14B6544-1D66-4118-8243-8F95411C2B02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetLiquidityPools.Test", "NetLiquidityPools.Test\NetLiquidityPools.Test.csproj", "{E14B6544-1D66-4118-8243-8F95411C2B02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetLiquidityPools.Uniswap.V3", "NetLiquidityPools.Uniswap.V3\NetLiquidityPools.Uniswap.V3.csproj", "{56F5B245-1A72-4F25-966A-9C9075387268}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetLiquidityPools.Uniswap.V3", "NetLiquidityPools.Uniswap.V3\NetLiquidityPools.Uniswap.V3.csproj", "{56F5B245-1A72-4F25-966A-9C9075387268}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetLiquidityPools.Factory", "NetLiquidityPools.Factory\NetLiquidityPools.Factory.csproj", "{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetLiquidityPools.Factory", "NetLiquidityPools.Factory\NetLiquidityPools.Factory.csproj", "{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoDexCommon.Internal", "CryptoDexCommon.Internal\CryptoDexCommon.Internal.csproj", "{09B6DAC1-56EA-4121-B245-5BA4FE5AEC55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C66507F8-0E73-4AE7-A386-C55D2BB0BB74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09B6DAC1-56EA-4121-B245-5BA4FE5AEC55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09B6DAC1-56EA-4121-B245-5BA4FE5AEC55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09B6DAC1-56EA-4121-B245-5BA4FE5AEC55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09B6DAC1-56EA-4121-B245-5BA4FE5AEC55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

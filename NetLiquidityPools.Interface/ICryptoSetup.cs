@@ -9,7 +9,17 @@ namespace NetLiquidityPools.Interface
     public enum NetworkType
     {
         Arbitrum,
-        Polygon
+        Polygon,
+        Ethereum
+    }
+
+
+    public interface ICryptoWalletSetup
+    {
+        public ICryptoSetup Setup { get; }
+        public string Name { get; }
+        public string Address { get; }
+        public string? PrivateKey { get; }
     }
 
     public interface ICryptoSetup
@@ -18,5 +28,10 @@ namespace NetLiquidityPools.Interface
         public string Web3Url { get; }  
 
         public NetworkType NetworkType { get; } 
+
+        public string TokenFile { get; }    
+
+        public ICryptoWalletSetup[] Wallets { get; }    
+
     }
 }

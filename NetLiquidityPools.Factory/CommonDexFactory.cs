@@ -1,32 +1,39 @@
-﻿using NetLiquidityPools.Interface;
+﻿using CryptoDexCommon.Internal;
+using NetLiquidityPools.Interface;
 using NetLiquidityPools.Uniswap.V3;
 
 namespace NetLiquidityPools.Factory
 {
 
-    internal class DummySetup : ICryptoSetup
-    {
-        public string Web3Url { get => "https://arb-mainnet.g.alchemy.com/v2/oZtC_Mn147DrNcRHHKGJd32IegkWB6Oo"; }
-
-        public NetworkType NetworkType { get => NetworkType.Arbitrum; }
-    }
 
     public class CommonDexFactory
     {
-        public static ICryptoSetup CreateSetup()
+        public static ICryptoSetup CreateSetup( string strFile )
         {
-            return new DummySetup();
+            ICryptoSetup? oSetup = CryptoSetup.Load(strFile);
+            if (oSetup == null) throw new Exception("Could not find setup file");
+            return oSetup;
         }
 
-        public static ILiguidityPoolProvider CreatePoolProvider(ICryptoSetup oSetup, LiquidityPoolType eType ) 
+
+        public static ICryptoClient CreateClient( ICryptoSetup oSetup, int nAccount = 0 )
+        {
+            return CryptoDexFactory.CreateClient(oSetup, nAccount); 
+        }
+
+
+        public static ILiguidityPoolProvider CreatePoolProvider(ICryptoClient oClient, LiquidityPoolType eType ) 
         { 
             switch( eType)
             {
                 case LiquidityPoolType.UniswapV3:
-                    return new UniswapV3PoolProvider(oSetup);
+                    return new UniswapV3PoolProvider(oClient);
                 default:
                     throw new NotImplementedException();    
             }
         }
+
+
+
     }
 }

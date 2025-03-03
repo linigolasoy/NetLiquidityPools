@@ -11,10 +11,14 @@
     /// </summary>
     public interface ILiguidityPoolProvider
     {
-        public ICryptoSetup Setup { get; }
+        public ICryptoClient Client { get; }
 
         public LiquidityPoolType Type { get; }
 
-        public Task<ILiquidityPool[]?> GetPoolsOfAddress(string strAddress);   
+        public Task<ILiquidityPool[]?> GetPoolsOfAddress(string strAddress);
+
+        public Task<ILiquidityPool[]?> GetPools();
+
+        public Task<ICryptoTransaction?> CreatePool(IToken oToken0, IToken oToken1, decimal nFee, decimal nAmount0, decimal nAmount1, decimal nRangeMax);
     }
 }
