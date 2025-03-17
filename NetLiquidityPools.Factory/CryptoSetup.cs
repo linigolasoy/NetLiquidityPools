@@ -20,9 +20,16 @@ namespace NetLiquidityPools.Factory
         public string TokenFile { get; set; } = string.Empty;
         [JsonProperty("Wallets")]
         public List<WalletJson>? Wallets { get; set; }
+        [JsonProperty("LeverageData")]
+        public LeverageJson? LeverageData { get; set; }
     }
 
+    internal class LeverageJson
+    {
+        [JsonProperty("MintContract")]
+        public string MintContract { get; set; } = string.Empty;
 
+    }
     internal class WalletJson
     {
         [JsonProperty("Name")]
@@ -42,6 +49,8 @@ namespace NetLiquidityPools.Factory
             NetworkType = eType;
             TokenFile = oJson.TokenFile;
 
+            LeverageSetupData = new LeverageSetupData(oJson.LeverageData!.MintContract);
+
             List<ICryptoWalletSetup> aWallets = new List<ICryptoWalletSetup>();
             if( oJson.Wallets != null && oJson.Wallets.Count > 0 )
             {
@@ -54,7 +63,7 @@ namespace NetLiquidityPools.Factory
         }
 
         public string Web3Url { get; }
-
+        public ILeverageSetupData LeverageSetupData { get; }
         public NetworkType NetworkType { get; }
 
         public string TokenFile { get; }

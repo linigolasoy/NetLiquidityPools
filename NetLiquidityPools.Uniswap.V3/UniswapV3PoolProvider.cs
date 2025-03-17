@@ -19,7 +19,7 @@ namespace NetLiquidityPools.Uniswap.V3
 
         private UniswapNonFungibleManager? m_oPositionManager = null;
 
-        internal string FactoryAddress { get => "0x1F98431c8aD98523631AE4a59f267346ea31F984"; }
+        public static string FactoryAddress { get => "0x1F98431c8aD98523631AE4a59f267346ea31F984"; }
 
 
         /// <summary>
@@ -97,6 +97,20 @@ namespace NetLiquidityPools.Uniswap.V3
         public async Task<ICryptoTransaction?> CreatePool(IToken oToken0, IToken oToken1, decimal nFee, decimal nAmount0, decimal nAmount1, decimal nRangeMax)
         {
             throw new NotImplementedException();    
+        }
+
+        public ILiquidityRangeCalculator CreateRangeCalculator(
+            IToken oToken0, IToken oToken1, 
+            decimal nAmount0, decimal nAmount1, 
+            decimal nPrice,
+            decimal nPercentMin, decimal nPercentMax)
+        {
+            return new UniswapRangeCalculator(
+                    oToken0, oToken1,
+                    nAmount0, nAmount1,
+                    nPrice,
+                    nPercentMin, nPercentMax
+                );
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CryptoDexCommon.Internal;
 using NetLiquidityPools.Interface;
 using NetLiquidityPools.Uniswap.V3;
+using NetLiquidityPools.Uniswap.V3.Yldr;
 
 namespace NetLiquidityPools.Factory
 {
@@ -33,7 +34,10 @@ namespace NetLiquidityPools.Factory
             }
         }
 
-
+        public static ILeverageLiquidity CreateLeveragedLiquidity(ICryptoWallet oWallet, ICryptoSetup oSetup)
+        {
+            return new YldrLeverageLiquidity(oWallet);
+        }
 
     }
 }

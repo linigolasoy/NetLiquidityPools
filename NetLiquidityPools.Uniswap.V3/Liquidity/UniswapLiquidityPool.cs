@@ -50,6 +50,11 @@ namespace NetLiquidityPools.Uniswap.V3.Liquidity
         public decimal Amount0 { get; private set; } = 0;
         public decimal Amount1 { get; private set; } = 0;
 
+        public decimal PriceMin { get; private set; } = 0;
+        public decimal PriceMax { get; private set; } = 0;
+
+        public decimal PriceActual { get; private set; } = 0;
+
         private BigInteger GetTickAtSqrtPrice(BigInteger oSqrtPriceX96)
         {
             double nSqrtPriceX96 = (double)oSqrtPriceX96;
@@ -119,7 +124,7 @@ namespace NetLiquidityPools.Uniswap.V3.Liquidity
             decimal nFee = (decimal)oPosOutput.Fee / 10000;
 
 
-            UniswapV3Factory oFactory = new UniswapV3Factory((IWeb3Client)(oProvider.Client), oProvider.FactoryAddress);
+            UniswapV3Factory oFactory = new UniswapV3Factory((IWeb3Client)(oProvider.Client), UniswapV3PoolProvider.FactoryAddress);
 
             UniswapPool oPool = await oFactory.GetPool(oPosOutput.Token0, oPosOutput.Token1, oPosOutput.Fee);
 
@@ -143,14 +148,31 @@ namespace NetLiquidityPools.Uniswap.V3.Liquidity
             Fees1 = UnitConversion.Convert.FromWei(oPosOutput.TokensOwed1, 6);
 
 
-            UniswapV3Factory oFactory = new UniswapV3Factory((IWeb3Client)m_oProvider.Client, m_oProvider.FactoryAddress);
+            UniswapV3Factory oFactory = new UniswapV3Factory((IWeb3Client)m_oProvider.Client, UniswapV3PoolProvider.FactoryAddress);
             UniswapPool oPool = await oFactory.GetPool(oPosOutput.Token0, oPosOutput.Token1, oPosOutput.Fee);
 
 
             var oSlot0 = await oPool.GetSlot0(m_oProvider.Client.Setup);
 
 
-            CalculateAmounts(oPosOutput, oSlot0);   
+            CalculateAmounts(oPosOutput, oSlot0);
+
+            UniswapPoolMath oMath = new UniswapPoolMath(Token0, Token1);
+
+            decimal nPriceMin = oMath.TickToPrice((int)oPosOutput.TickLower);
+            decimal nPriceMax = oMath.TickToPrice((int)oPosOutput.TickUpper);
+            decimal nPriceActual = oMath.TickToPrice((int)oSlot0.Tick);
+            BigInteger oPriceActual = oMath.PriceToTick(nPriceActual);
+
+            PriceMin = nPriceMin;
+            PriceMax = nPriceMax;   
+            PriceActual = nPriceActual;
+
+            BigInteger[] aAmounts = oMath.CalculateAmounts(oPosOutput.Liquidity, oSlot0.Tick, oPosOutput.TickLower, oPosOutput.TickUpper);
+
+            BigInteger[] aAmountsLow    = oMath.CalculateAmounts(oPosOutput.Liquidity, oPosOutput.TickLower, oPosOutput.TickLower, oPosOutput.TickUpper);
+            BigInteger[] aAmountsHigh   = oMath.CalculateAmounts(oPosOutput.Liquidity, oPosOutput.TickUpper, oPosOutput.TickLower, oPosOutput.TickUpper);
+
 
         }
 
