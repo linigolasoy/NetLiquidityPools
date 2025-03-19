@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CryptoDexCommon.Internal
 {
-    internal class BaseTransaction : ICryptoTransaction
+    public class BaseTransaction : ICryptoTransaction
     {
 
         public BaseTransaction( TransactionReceipt oReceipt ) 

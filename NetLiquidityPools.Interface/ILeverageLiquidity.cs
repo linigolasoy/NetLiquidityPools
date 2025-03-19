@@ -14,5 +14,15 @@ namespace NetLiquidityPools.Interface
         public ICryptoWallet Wallet { get; }
 
         public Task<ICryptoTransaction?> CreatePool(IToken oToken0, IToken oToken1, decimal nFee, decimal nAmount0, decimal nAmount1, decimal nRangeMax, decimal nLeverage);
+
+        // public Task<ICryptoTransaction?> CollectFees(string strContractAddress);
+
+
+        public Task<ILeveragedContract[]?> GetContracts();
+
+        public Task<ILeveragedPositionData?> GetPositionData(string strContractAddress);
+
+        public Task<ICryptoTransaction?> CollectFees(string strContractAddress);
+
     }
 }

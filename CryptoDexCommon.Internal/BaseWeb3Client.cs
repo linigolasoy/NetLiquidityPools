@@ -1,4 +1,5 @@
-﻿using Nethereum.Signer;
+﻿using CryptoDexCommon.Internal.EtherScan;
+using Nethereum.Signer;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using NetLiquidityPools.Interface;
@@ -13,6 +14,7 @@ namespace CryptoDexCommon.Internal
     internal class BaseWeb3Client : IWeb3Client
     {
 
+        private const string CORRECT_API_KEY = "QMQVE42SFHI6S8QFMZDY7S58VYB7C6H3EJ";
         public BaseWeb3Client(ICryptoSetup oSetup, int nWallet ) 
         { 
             Setup = oSetup;
@@ -66,5 +68,42 @@ namespace CryptoDexCommon.Internal
         public Account[] Accounts { get; private set; } = Array.Empty<Account>();
 
         public ICryptoWallet Wallet { get; }
+
+
+        public async Task<IScanTransaction[]?> GetTransactions(string strAddress)
+        {
+            HttpClient oClient = new HttpClient();
+
+
+
+            int nPage = 1;
+            int nCount = 1000;
+
+            List<IScanTransaction> aResult = new List<IScanTransaction>();
+            while( true )
+            {
+                string strUrl = $"https://api.arbiscan.io/api?module=account&action=txlist&address={Wallet.PublicKey}&startblock=0&endblock=latest&page={nPage}&offset={nCount}&sort=asc&apikey={CORRECT_API_KEY}";
+
+                var oResponse = await oClient.GetAsync(strUrl);
+                if (!oResponse.IsSuccessStatusCode) return null;
+
+                string? strContent = await oResponse.Content.ReadAsStringAsync();
+                if (strContent == null) return null;
+
+                var oApiResponse = ScanApiResponse<List<TransactionListResponse>>.Create(strContent);
+                if (oApiResponse == null) return null;
+
+                if( oApiResponse.Result == null ) break;
+                if (oApiResponse.Result.Count == 0) break;
+                foreach( var oItem in oApiResponse.Result )
+                {
+                    aResult.Add( new ScanTransaction(oItem) );
+                }
+                if( oApiResponse.Result.Count < nCount ) break; 
+                nPage++;
+            }
+
+            return aResult.OrderByDescending(p=> p.DateTime).ToArray(); 
+        }
     }
 }

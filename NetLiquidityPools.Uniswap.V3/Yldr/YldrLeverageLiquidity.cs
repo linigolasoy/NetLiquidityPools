@@ -1,9 +1,11 @@
 ﻿using CryptoDexCommon.Internal;
+using CryptoDexCommon.Internal.EtherScan;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts.Standards.ERC20.TokenList;
 using NetLiquidityPools.Interface;
 using NetLiquidityPools.Uniswap.V3.Liquidity;
 using NetLiquidityPools.Uniswap.V3.Pool;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,12 @@ namespace NetLiquidityPools.Uniswap.V3.Yldr
 {
     public class YldrLeverageLiquidity : ILeverageLiquidity
     {
+
+        private const string MINT_CONTRACT = "0xD6Ec016A6dfB19c83fBab7f9c24c090035E7bb97";
+        private const string LEVERAGE_DATA_CONTRACT = "0xDe3fe78D4C154773718d5aAF3697B1d823849996";
+        internal const string FLASLOAN_PROVIDER  = "0x0DCcc7E957a255132F396b74DD1e2E453F8bBa0e";
+        internal const string ASSET_CONVERTER    = "0xAA81Ea3AbB14fD0c9b3bE83e7a2fC2f8c7D87707";
+        private const string TAG_DATA = "data";
         public YldrLeverageLiquidity( ICryptoWallet oWallet ) 
         {
             Wallet = oWallet;
@@ -119,6 +127,68 @@ namespace NetLiquidityPools.Uniswap.V3.Yldr
 
 
             throw new NotImplementedException();
+        }
+
+
+        /// <summary>
+        /// Get contracts of leveraged liquidity
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ILeveragedContract[]?> GetContracts()
+        {
+
+
+
+
+            IWeb3Client oClient = (IWeb3Client)(Wallet.Client);
+            var aTransactions = await oClient.GetTransactions(Wallet.PublicKey);
+            if( aTransactions == null ) return null;
+
+            IScanTransaction? oFound = aTransactions.FirstOrDefault(p => p.Success &&    
+                    p.ToAddress != null && p.ToAddress.ToUpper().Equals( Setup.LeverageSetupData.MintContract.ToUpper() ) &&
+                    p.Function != null && p.Function.Contains("mint")); 
+
+            if(oFound == null) return null; 
+            var oResult = await oClient.Web3Client.Eth.Transactions.GetTransactionByHash.SendRequestAsync(oFound.TxHash);
+            // oClient.Web3Client.Eth.Blocks..TransactionManager.Account.TransactionManager..Eth.TransactionManager.
+
+            var oResult2 = await oClient.Web3Client.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(oFound.TxHash);
+            if( oResult2 != null && oResult2.Logs != null )
+            {
+                if (!(oResult2.Logs is JArray)) return null;
+                JArray aLogs = (JArray)oResult2.Logs;  
+                foreach ( var oLog in aLogs.Children() )
+                {
+                    if (!(oLog is JObject)) continue;
+                    JObject oObject = (JObject)oLog;
+
+                    if( oObject.ContainsKey(TAG_DATA) )
+                    {
+                        string strData = oObject[TAG_DATA].ToString();
+                        if( strData.StartsWith("0x60806040"))
+                        {
+                            Console.WriteLine("Lohise");
+                        }   
+
+                    }
+
+                    Console.WriteLine(oObject.ToString());
+                }
+            }
+            throw new NotImplementedException ();   
+        }
+
+        public async Task<ILeveragedPositionData?> GetPositionData(string strContractAddress)
+        {
+            LeverageDataProvider oProvider = new LeverageDataProvider(LEVERAGE_DATA_CONTRACT, (IWeb3Client)(Wallet.Client));  
+            return await oProvider.GetPositionData(strContractAddress);
+        }
+
+
+        public async Task<ICryptoTransaction?> CollectFees(string strContractAddress)
+        {
+            ILeveragedContract oContract = new LeverageContract(this, strContractAddress);  
+            return await oContract.CollectFees();   
         }
     }
 }

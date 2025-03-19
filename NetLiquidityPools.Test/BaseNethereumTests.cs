@@ -62,6 +62,9 @@ namespace NetLiquidityPools.Test
 
             BigInteger[] aAmountsInitial = oMath.CalculateAmounts(oLiquidity, oTickActual, oTickLow, oTickHigh);
 
+            decimal nPriceHighLow = nPriceEth + (nPriceEth - nPriceEthLow);
+            BigInteger oTickHighLow = oMath.PriceToTick(nPriceHighLow);
+            BigInteger[] aAmountsHighLow = oMath.CalculateAmounts(oLiquidity, oTickHighLow, oTickLow, oTickHighLow);
 
             BigInteger[] aAmountsLow = oMath.CalculateAmounts(oLiquidity, oTickLow, oTickLow, oTickHigh);
             BigInteger[] aAmountsHigh = oMath.CalculateAmounts(oLiquidity, oTickHigh, oTickLow, oTickHigh);
@@ -73,6 +76,50 @@ namespace NetLiquidityPools.Test
             // decimal nLoss = 
             return new decimal[] { nAmountInitial - nAmountLow, nAmountHigh - nAmountInitial };
         }
+
+        decimal[] CalculateProfitLossExt(UniswapPoolMath oMath, decimal nAmountUsdc, 
+            decimal nPriceEth, decimal nRangeDn, decimal nRangeUp, 
+            decimal nRangeRebalance
+            )
+        {
+            decimal nMultiplier = (nRangeUp + nRangeDn) / nRangeDn;
+            decimal nMultiplierDn = nRangeDn / (nRangeUp + nRangeDn);
+            decimal nMultiplierUp = nRangeUp / (nRangeUp + nRangeDn);
+
+            decimal nAmountUsdcEth  = nAmountUsdc  * nMultiplierUp;
+            decimal nAmountUsdcUsdc = nAmountUsdc * nMultiplierDn;
+            decimal nAmount0 = nAmountUsdcEth / nPriceEth;
+            decimal nAmount1 = nAmountUsdcUsdc;
+
+            decimal nPriceEthLow = nPriceEth * (100M - nRangeDn) / 100M;
+            decimal nPriceEthHigh = nPriceEth * (100M + nRangeUp) / 100M;
+            BigInteger oTickLow = oMath.PriceToTick(nPriceEthLow);
+            BigInteger oTickHigh = oMath.PriceToTick(nPriceEthHigh);
+            BigInteger oTickActual = oMath.PriceToTick(nPriceEth);
+
+            BigInteger oAmount0 = oMath.Amount0Big(nAmount0);
+            BigInteger oAmount1 = oMath.Amount1Big(nAmount1);
+            BigInteger oLiquidity = oMath.LiquidityFromAmountsTicks(oTickActual, oTickLow, oTickHigh, oAmount0, oAmount1);
+
+             BigInteger[] aAmountsInitial = oMath.CalculateAmounts(oLiquidity, oTickActual, oTickLow, oTickHigh);
+
+            decimal nPriceCloseDn = nPriceEth * (100M - nRangeRebalance) / 100M;
+            decimal nPriceCloseUp = nPriceEth * (100M + nRangeRebalance) / 100M;
+            BigInteger oTickCloseLow = oMath.PriceToTick(nPriceCloseDn);
+            BigInteger oTickCloseHigh = oMath.PriceToTick(nPriceCloseUp);
+
+
+            BigInteger[] aAmountsLow = oMath.CalculateAmounts(oLiquidity, oTickCloseLow, oTickLow, oTickHigh);
+            BigInteger[] aAmountsHigh = oMath.CalculateAmounts(oLiquidity, oTickCloseHigh, oTickLow, oTickHigh);
+
+            decimal nAmountInitial = oMath.BigToAmount0(aAmountsInitial[0]) * nPriceEth + oMath.BigToAmount1(aAmountsInitial[1]);
+            decimal nAmountLow = oMath.BigToAmount0(aAmountsLow[0]) * nPriceCloseDn + oMath.BigToAmount1(aAmountsLow[1]);
+            decimal nAmountHigh = oMath.BigToAmount0(aAmountsHigh[0]) * nPriceCloseUp + oMath.BigToAmount1(aAmountsHigh[1]);
+
+            // decimal nLoss = 
+            return new decimal[] { nAmountInitial - nAmountLow, nAmountHigh - nAmountInitial };
+        }
+
 
         [TestMethod]
         public async Task UniswapPoolMathTest2()
@@ -89,50 +136,52 @@ namespace NetLiquidityPools.Test
             // ILiguidityPoolProvider oProvider = CommonDexFactory.CreatePoolProvider(oClient, LiquidityPoolType.UniswapV3);
 
 
-            decimal nInitialAmount = 370;
-            decimal nLeverage = 3.5M;
+            decimal nInitialAmount = 5000;
+            decimal nLeverage = 4M;
 
 
-            decimal nRangeUp = 2;
-            decimal nRangeDn = 2;
-            decimal nPrice = 1922;
-            decimal nPricelow = (100M - nRangeDn) * nPrice / 100M;
-            decimal nPriceHigh = (100M + nRangeUp) * nPrice / 100M;
+            decimal nRangeUpBest = -1;
+            decimal nRangeDnBest = -1;
 
+            decimal nRangeTotal = 30;
+            decimal nRangeMin = 4M;
+            decimal nStep = 0.1M;
 
+            decimal nPrice = 2000;
             UniswapPoolMath oMath = new UniswapPoolMath(oToken0, oToken1);
             decimal nPnlTotalAmount = nInitialAmount * nLeverage;
-            decimal[] aPnl = CalculateProfitLoss(oMath, nPnlTotalAmount, nPrice, nPricelow, nPriceHigh);
 
+            decimal nBestRelation = 9E10M;
 
-            decimal nMinDifference = 9E10M;
-            decimal nPercentMin = -1;
-            for( int nPercent = 50; nPercent <= 90; nPercent++ )
+            for ( decimal nRangeDn = nRangeMin; nRangeDn < nRangeTotal; nRangeDn += nStep)
             {
-                decimal nAmountUsdc = (decimal)nPercent * nInitialAmount / 100.0M;
-                decimal nAmountEth = (decimal)(100 - nPercent) * nInitialAmount / 100.0M;
+                decimal nRangeUp = nRangeTotal - nRangeDn;
+                if (nRangeUp <= 0) continue;
+                decimal nPricelow = (100M - nRangeDn) * nPrice / 100M;
+                decimal nPriceHigh = (100M + nRangeUp) * nPrice / 100M;
 
-                decimal nAmountBorrowUsdc = nAmountUsdc * nLeverage;
-                decimal nAmountBorrowEth = nAmountEth * nLeverage;
-                decimal[] aProfitsUsdc = CalculateProfitLoss(oMath, nAmountBorrowUsdc, nPrice, nPricelow, nPriceHigh);
-                decimal[] aProfitsEth = CalculateProfitLoss(oMath, nAmountBorrowEth, nPrice, nPricelow, nPriceHigh);
+                decimal nRangeClose = Math.Min(nRangeDn, nRangeUp);
 
-                decimal nBorrowedEth = (nAmountBorrowEth - nAmountEth) / nPrice;
-                decimal nGainLow    = nBorrowedEth * (nPrice - nPricelow);
-                decimal nLossHigh   = nBorrowedEth * (nPriceHigh - nPrice);
+                decimal[] aPnl = CalculateProfitLossExt(oMath, nPnlTotalAmount, nPrice, nRangeDn, nRangeUp, nRangeClose);
 
-                decimal nTotalLossLow       = aProfitsEth[0] + aProfitsUsdc[0] - nGainLow;
-                decimal nTotalProfitHigh    = aProfitsEth[1] + aProfitsUsdc[1] - nLossHigh;
+                decimal nMinPnl = Math.Min(aPnl[0], aPnl[1]);
+                decimal nMaxPnl = Math.Max(aPnl[0], aPnl[1]);
 
-                decimal nDifference = nTotalProfitHigh - nTotalLossLow; 
+                decimal nRelation = nMinPnl / nMaxPnl;
 
-                if( Math.Abs(nDifference) < nMinDifference )
+                decimal nDiff = Math.Abs(1M - nRelation);
+                if( nDiff < nBestRelation )
                 {
-                    nMinDifference = Math.Abs(nDifference);
-                    nPercentMin = nPercent;
+                    nBestRelation = nDiff;  
                 }
 
+
             }
+
+            /// decimal nRangeUp = 13;
+            // decimal nRangeDn = 6;
+
+
 
 
 

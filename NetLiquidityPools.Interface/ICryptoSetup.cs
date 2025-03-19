@@ -35,7 +35,7 @@ namespace NetLiquidityPools.Interface
 
         public NetworkType NetworkType { get; } 
 
-        public string TokenFile { get; }    
+        public string TokenFile { get; }
 
         public ILeverageSetupData LeverageSetupData { get; }
 

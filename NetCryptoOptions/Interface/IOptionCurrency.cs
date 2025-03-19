@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetLiquidityPools.Interface.Options
+namespace NetCryptoOptions.Interface
 {
     /// <summary>
     /// Option currency
