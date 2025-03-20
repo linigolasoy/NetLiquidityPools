@@ -113,7 +113,7 @@ namespace NetLiquidityPools.Uniswap.V3.Yldr
 
             IWeb3Client oClient = (IWeb3Client)(Wallet.Client);
 
-            var oContract = oClient.Web3Client.Eth.GetContract<MintFunction>(Setup.LeverageSetupData.MintContract);
+            var oContract = oClient.Web3Client.Eth.GetContract<MintFunction>(Setup.LeverageSetup.MintContract);
 
             var oContractFunction = oContract.GetFunction<MintFunction>();
             var oInput = oContractFunction.CreateTransactionInput(oFuction, Wallet.PublicKey);
@@ -145,7 +145,7 @@ namespace NetLiquidityPools.Uniswap.V3.Yldr
             if( aTransactions == null ) return null;
 
             IScanTransaction? oFound = aTransactions.FirstOrDefault(p => p.Success &&    
-                    p.ToAddress != null && p.ToAddress.ToUpper().Equals( Setup.LeverageSetupData.MintContract.ToUpper() ) &&
+                    p.ToAddress != null && p.ToAddress.ToUpper().Equals( Setup.LeverageSetup.MintContract.ToUpper() ) &&
                     p.Function != null && p.Function.Contains("mint")); 
 
             if(oFound == null) return null; 
@@ -178,17 +178,30 @@ namespace NetLiquidityPools.Uniswap.V3.Yldr
             throw new NotImplementedException ();   
         }
 
-        public async Task<ILeveragedPositionData?> GetPositionData(string strContractAddress)
+        public async Task<ILeveragedPositionData?> GetPositionData(string? strContractAddress = null)
         {
+            string strContract = (strContractAddress == null ? Setup.LeverageSetup.ContractAddress : strContractAddress);
+
             LeverageDataProvider oProvider = new LeverageDataProvider(LEVERAGE_DATA_CONTRACT, (IWeb3Client)(Wallet.Client));  
-            return await oProvider.GetPositionData(strContractAddress);
+            return await oProvider.GetPositionData(strContract);
         }
 
 
-        public async Task<ICryptoTransaction?> CollectFees(string strContractAddress)
+        public async Task<ICryptoTransaction?> CollectFees(string? strContractAddress = null)
         {
-            ILeveragedContract oContract = new LeverageContract(this, strContractAddress);  
+            string strContract = (strContractAddress == null ? Setup.LeverageSetup.ContractAddress : strContractAddress);
+
+            ILeveragedContract oContract = new LeverageContract(this, strContract);  
             return await oContract.CollectFees();   
+        }
+        public async Task<ICryptoTransaction?> Rebalance(string? strContractAddress = null, decimal? nPercentLow = null, decimal? nPercentHigh = null)
+        {
+            string strContract = (strContractAddress == null ? Setup.LeverageSetup.ContractAddress : strContractAddress);
+            ILeveragedContract oContract = new LeverageContract(this, strContract);
+            decimal nLow  = (nPercentLow == null  ? Setup.LeverageSetup.PercentDown : nPercentLow.Value);
+            decimal nHigh = (nPercentHigh == null ? Setup.LeverageSetup.PercentUp   : nPercentHigh.Value);
+
+            return await oContract.Rebalance(nLow, nHigh);
         }
     }
 }

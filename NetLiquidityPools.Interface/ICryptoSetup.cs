@@ -23,11 +23,6 @@ namespace NetLiquidityPools.Interface
     }
 
 
-    public interface ILeverageSetupData
-    {
-        public string MintContract { get; }
-    }
-
     public interface ICryptoSetup
     {
 
@@ -37,9 +32,10 @@ namespace NetLiquidityPools.Interface
 
         public string TokenFile { get; }
 
-        public ILeverageSetupData LeverageSetupData { get; }
 
         public ICryptoWalletSetup[] Wallets { get; }    
+
+        public ILeverageSetup LeverageSetup { get; }    
 
     }
 }

@@ -44,6 +44,32 @@ namespace NetLiquidityPools.Uniswap.V3.Liquidity
         public IToken Token0 { get; }
         public IToken Token1 { get; }
 
+        public BigInteger FeeToBig(decimal nFee)
+        {
+            int nResult = (int)(nFee * 10000.0M);
+            return new BigInteger(nResult);
+        }
+
+        public decimal BigToFee(BigInteger oFee)
+        {
+            int nResult = (int)oFee;
+            return (decimal)nResult / 10000.0M;
+        }
+
+        public int TickSpacing(decimal nFee)
+        {
+            BigInteger oFee = FeeToBig(nFee);
+            return TickSpacing(oFee);
+        }
+
+
+        public int TickSpacing(BigInteger oFee)
+        {
+            if (oFee == 100) return 1;
+            if (oFee == 500) return 10;
+            if (oFee == 3000) return 30;
+            return 100;
+        }
 
         /*
         function getLiquidityForAmounts(
@@ -250,13 +276,27 @@ namespace NetLiquidityPools.Uniswap.V3.Liquidity
             return (decimal)nPriceRaw;
         }
 
-        public BigInteger PriceToTick( decimal nPrice )
+        public BigInteger PriceToTick( decimal nPrice, int nSpacing = 1 )
         {
             double nPriceRaw = (double)nPrice;
             nPriceRaw /= (m_nPow0 / m_nPow1);
 
             double nTick = Math.Log(nPriceRaw) / Math.Log(POW_CONSTANT);
-            return new BigInteger(nTick);
+
+            int nTickInt = (int)nTick;
+            if( nSpacing > 1 )
+            {
+                int nMod = Math.Abs(nTickInt % nSpacing); 
+                if( nMod != 0 )
+                {
+                    if( nMod < nSpacing / 2 )
+                    {
+                        nTickInt += nMod;    
+                    }
+                    else nTickInt -= (nSpacing - nMod);
+                }
+            }
+            return new BigInteger(nTickInt);
             /*
 
             BigInteger oSqrt = PriceToSqrt(nPrice);

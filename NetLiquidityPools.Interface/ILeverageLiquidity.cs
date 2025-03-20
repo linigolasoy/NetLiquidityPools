@@ -20,9 +20,11 @@ namespace NetLiquidityPools.Interface
 
         public Task<ILeveragedContract[]?> GetContracts();
 
-        public Task<ILeveragedPositionData?> GetPositionData(string strContractAddress);
+        public Task<ILeveragedPositionData?> GetPositionData(string? strContractAddress = null);
 
-        public Task<ICryptoTransaction?> CollectFees(string strContractAddress);
+        public Task<ICryptoTransaction?> CollectFees(string? strContractAddress = null);
 
+
+        public Task<ICryptoTransaction?> Rebalance(string? strContractAddress = null, decimal? nPercentDown = null, decimal? nPercentUp = null);
     }
 }

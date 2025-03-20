@@ -23,23 +23,24 @@ namespace NetLiquidityPools.Test
             IToken? oToken1 = oClient.Tokens.FirstOrDefault(p => p.Symbol == "USDC");
             Assert.IsNotNull(oToken1);
 
+
             ILeverageLiquidity oLeveraged = CommonDexFactory.CreateLeveragedLiquidity(oClient.Wallet, oClient.Setup);
 
-            var oTx = await oLeveraged.CollectFees("0x708a2c5dd9670197a0acb8a6cd7efa1f52a605b2");
-            Assert.IsNotNull(oTx);
+            var oTxFees = await oLeveraged.CollectFees();
+            Assert.IsNotNull(oTxFees);
+            Assert.IsTrue(oTxFees.Success);
 
 
-            var oPosData = await oLeveraged.GetPositionData("0x708a2c5dd9670197a0acb8a6cd7efa1f52a605b2");
+            var oPosData = await oLeveraged.GetPositionData();
             Assert.IsNotNull(oPosData);
 
-            ILeveragedContract[]? aContracts = await oLeveraged.GetContracts();   
-            Assert.IsNotNull(aContracts);
-            Assert.IsTrue(aContracts.Any());    
-            decimal nAmount0 = 5M / 2000M ;
-            decimal nAmount1 = 5;
-            var oResult = await oLeveraged.CreatePool(oToken0, oToken1, 0.05M, nAmount0, nAmount1, 5, 3);
-            Assert.IsNotNull(oResult);
-            Assert.IsTrue(oResult.Success); 
+            var oTxRebalance = await oLeveraged.Rebalance();
+            Assert.IsNotNull(oTxRebalance);
+            Assert.IsTrue(oTxRebalance.Success);
+
+
+
+
         }
 
     }

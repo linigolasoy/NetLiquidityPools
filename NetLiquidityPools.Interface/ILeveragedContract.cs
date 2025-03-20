@@ -16,5 +16,7 @@ namespace NetLiquidityPools.Interface
         public string Address { get; }
 
         public Task<ICryptoTransaction?> CollectFees();
+
+        public Task<ICryptoTransaction?> Rebalance( decimal nPercentDown, decimal nPercentUp);
     }
 }

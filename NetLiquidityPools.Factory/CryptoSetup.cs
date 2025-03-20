@@ -29,6 +29,18 @@ namespace NetLiquidityPools.Factory
         [JsonProperty("MintContract")]
         public string MintContract { get; set; } = string.Empty;
 
+        [JsonProperty("LeverageContract")]
+        public string LeverageContract { get; set; } = string.Empty;
+        [JsonProperty("PercentDown")]
+        public decimal PercentDown { get; set; } = 0;
+
+        [JsonProperty("PercentUp")]
+        public decimal PercentUp { get; set; } = 0;
+        [JsonProperty("HedgeApiKey")]
+        public string HedgeApiKey { get; set; } = string.Empty;
+        [JsonProperty("HedgeApiSecret")]
+        public string HedgeApiSecret { get; set; } = string.Empty;
+
     }
     internal class WalletJson
     {
@@ -49,7 +61,7 @@ namespace NetLiquidityPools.Factory
             NetworkType = eType;
             TokenFile = oJson.TokenFile;
 
-            LeverageSetupData = new LeverageSetupData(oJson.LeverageData!.MintContract);
+            LeverageSetup = new LeverageSetup(oJson.LeverageData!);
 
             List<ICryptoWalletSetup> aWallets = new List<ICryptoWalletSetup>();
             if( oJson.Wallets != null && oJson.Wallets.Count > 0 )
@@ -63,8 +75,10 @@ namespace NetLiquidityPools.Factory
         }
 
         public string Web3Url { get; }
-        public ILeverageSetupData LeverageSetupData { get; }
+        // public ILeverageSetupData LeverageSetupData { get; }
         public NetworkType NetworkType { get; }
+
+        public ILeverageSetup LeverageSetup { get; }
 
         public string TokenFile { get; }
 
