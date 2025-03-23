@@ -18,6 +18,8 @@ namespace NetLiquidityPools.Factory
         public string NetworkTypeString { get; set; } = string.Empty;
         [JsonProperty("TokenFile")]
         public string TokenFile { get; set; } = string.Empty;
+        [JsonProperty("LogPath")]
+        public string LogPath { get; set; } = string.Empty;
         [JsonProperty("Wallets")]
         public List<WalletJson>? Wallets { get; set; }
         [JsonProperty("LeverageData")]
@@ -60,6 +62,7 @@ namespace NetLiquidityPools.Factory
             Web3Url = oJson.Url;   
             NetworkType = eType;
             TokenFile = oJson.TokenFile;
+            LogPath = oJson.LogPath;
 
             LeverageSetup = new LeverageSetup(oJson.LeverageData!);
 
@@ -81,6 +84,7 @@ namespace NetLiquidityPools.Factory
         public ILeverageSetup LeverageSetup { get; }
 
         public string TokenFile { get; }
+        public string LogPath { get; }
 
         public ICryptoWalletSetup[] Wallets {get; }
 

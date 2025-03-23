@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetLiquidityPools.Bot\NetLiquidityPools.Bot.csproj" />
+    <ProjectReference Include="..\CryptoDexCommon.Internal\CryptoDexCommon.Internal.csproj" />
     <ProjectReference Include="..\NetLiquidityPools.Factory\NetLiquidityPools.Factory.csproj" />
     <ProjectReference Include="..\NetLiquidityPools.Interface\NetLiquidityPools.Interface.csproj" />
+    <ProjectReference Include="..\NetLiquidityPools.Uniswap.V3\NetLiquidityPools.Uniswap.V3.csproj" />
   </ItemGroup>
 
 </Project>

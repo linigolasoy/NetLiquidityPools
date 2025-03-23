@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Crypto.Exchanges.Cex\Crypto.Exchanges.Cex.csproj" />
     <ProjectReference Include="..\NetCryptoOptions\NetCryptoOptions.csproj" />
     <ProjectReference Include="..\NetLiquidityPools.Factory\NetLiquidityPools.Factory.csproj" />
     <ProjectReference Include="..\NetLiquidityPools.Interface\NetLiquidityPools.Interface.csproj" />

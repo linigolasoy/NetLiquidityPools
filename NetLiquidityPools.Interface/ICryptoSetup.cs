@@ -31,7 +31,7 @@ namespace NetLiquidityPools.Interface
         public NetworkType NetworkType { get; } 
 
         public string TokenFile { get; }
-
+        public string LogPath { get; }  
 
         public ICryptoWalletSetup[] Wallets { get; }    
 

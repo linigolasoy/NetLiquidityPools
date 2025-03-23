@@ -19,5 +19,11 @@ namespace CryptoDexCommon.Internal
             return new BaseWeb3Client( oSetup, nWallet );    
         }
 
+        public static ICommonLogger CreateLogger( ICryptoSetup oSetup, string strFile, CancellationToken oToken )
+        {
+            return new CommonLogger(oSetup, strFile, oToken);
+
+        }
+
     }
 }

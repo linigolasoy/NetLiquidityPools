@@ -16,9 +16,14 @@ namespace NetLiquidityPools.Test
         public const string OPTIONS_FILE    = "d:/Data/NetLiquidityPools/OptionsSetup.json";
 
 
-        public static ICryptoClient CreateClient()
+        public static ICryptoSetup CreateSetup()
         {
             ICryptoSetup oSetup = CommonDexFactory.CreateSetup(TestCommon.SETUP_FILE);
+            return oSetup;
+        }
+        public static ICryptoClient CreateClient()
+        {
+            ICryptoSetup oSetup = CreateSetup();    
             ICryptoClient oClient = CommonDexFactory.CreateClient(oSetup);
             return oClient;
         }
