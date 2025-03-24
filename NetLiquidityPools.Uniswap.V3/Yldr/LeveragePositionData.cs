@@ -4,6 +4,7 @@ using NetLiquidityPools.Uniswap.V3.Pool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,6 +36,11 @@ namespace NetLiquidityPools.Uniswap.V3.Yldr
             PriceLow = oMath.TickToPrice(oOutput.TickLower);
             PriceHigh = oMath.TickToPrice(oOutput.TickUpper);
 
+            TickActual = oSlot0.Tick;   
+            TickUpper = oOutput.TickUpper;
+            TickLower = oOutput.TickLower;
+            Liquidity = oOutput.Liquidity;
+
             Amount0 = oMath.BigToAmount0(oOutput.Amount0);
             Amount1 = oMath.BigToAmount1(oOutput.Amount1);
 
@@ -64,6 +70,11 @@ namespace NetLiquidityPools.Uniswap.V3.Yldr
         public decimal PriceHigh { get; }
 
         public decimal PriceActual { get; }
+        public BigInteger TickActual { get; }
+
+        public BigInteger TickUpper { get; }
+        public BigInteger TickLower { get; }
+        public BigInteger Liquidity { get; }
 
         public int TickStep { get; }
     }

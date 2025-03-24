@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NetLiquidityPools.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "d:/Data/NetLiquidityPools/NetLiquidityPoolsSetup_Raul.json"
+    }
+  }
+}

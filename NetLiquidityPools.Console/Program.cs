@@ -15,7 +15,7 @@ namespace NetLiquidityPools.Console
             Close
         }
 
-        private const string SETUP_FILE = "d:/Data/NetLiquidityPools/NetLiquidityPoolsSetup.json";
+        // private const string SETUP_FILE = "d:/Data/NetLiquidityPools/NetLiquidityPoolsSetup.json";
 
         /// <summary>
         /// Return if user hit <F> key to end
@@ -36,9 +36,9 @@ namespace NetLiquidityPools.Console
 
         public static async Task<int> Main(string[] args)
         {
-
-
-            ICryptoSetup oSetup = CommonDexFactory.CreateSetup(SETUP_FILE);
+            if (args.Length <= 0) throw new Exception("Debe incluir el path del setup");
+            System.Console.WriteLine($"Parametro [{args[0]}]");
+            ICryptoSetup oSetup = CommonDexFactory.CreateSetup(args[0]);
 
             ILiquidityBot oBot = BotFactory.CreateBot(oSetup);
 

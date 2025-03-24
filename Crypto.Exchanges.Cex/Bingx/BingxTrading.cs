@@ -18,6 +18,7 @@ namespace Crypto.Exchanges.Cex.Bingx
     internal class BingxTrading : IFuturesTrading
     {
         private IExchangeRestClient m_oGlobalClient;
+        private bool m_bMultiAsset = false;
         public BingxTrading(ICexExchange oExchange)
         {
             Exchange = oExchange;
@@ -157,6 +158,40 @@ namespace Crypto.Exchanges.Cex.Bingx
             catch (Exception ex)
             {
                 return new TradingResult<string>(ex);
+            }
+        }
+
+        /// <summary>
+        /// Set leverage    
+        /// </summary>
+        /// <param name="oSymbol"></param>
+        /// <param name="nLeverage"></param>
+        /// <returns></returns>
+        public async Task<ITradingResult<bool>> SetLeverage( IFuturesSymbol oSymbol, int nLeverage )
+        {
+            try
+            {
+                if (!m_bMultiAsset)
+                {
+                    var oResultMulti = await m_oGlobalClient.BingX.PerpetualFuturesApi.Account.SetMultiAssetModeAsync(MultiAssetMode.SingleAssetMode);
+                    if (oResultMulti == null || !oResultMulti.Success) throw new Exception("Invalid multiasset");
+                    m_bMultiAsset = true;
+                }
+                var oResultLong = await m_oGlobalClient.BingX.PerpetualFuturesApi.Account.SetLeverageAsync(oSymbol.Symbol, BingX.Net.Enums.PositionSide.Long, nLeverage);
+                if (oResultLong == null) return new TradingResult<bool>("Result returned null");
+                if (!oResultLong.Success) return new TradingResult<bool>(oResultLong.Error!.ToString());
+                if (oResultLong.Data == null) return new TradingResult<bool>("Result returned data null");
+
+                var oResultShort = await m_oGlobalClient.BingX.PerpetualFuturesApi.Account.SetLeverageAsync(oSymbol.Symbol, BingX.Net.Enums.PositionSide.Short, nLeverage);
+
+                if (oResultShort == null) return new TradingResult<bool>("Result returned null");
+                if (!oResultShort.Success) return new TradingResult<bool>(oResultShort.Error!.ToString());
+                if (oResultShort.Data == null) return new TradingResult<bool>("Result returned data null");
+                return new TradingResult<bool>(true);
+            }
+            catch (Exception ex)
+            {
+                return new TradingResult<bool>(ex);
             }
         }
     }

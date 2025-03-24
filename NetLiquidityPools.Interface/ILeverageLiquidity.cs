@@ -18,7 +18,7 @@ namespace NetLiquidityPools.Interface
         // public Task<ICryptoTransaction?> CollectFees(string strContractAddress);
 
 
-        public Task<ILeveragedContract[]?> GetContracts();
+        public Task<string?> GetLastContractAddress();
 
         public Task<ILeveragedPositionData?> GetPositionData(string? strContractAddress = null);
 

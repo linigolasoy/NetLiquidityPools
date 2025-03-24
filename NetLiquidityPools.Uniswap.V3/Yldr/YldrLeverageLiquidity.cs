@@ -5,6 +5,7 @@ using Nethereum.Contracts.Standards.ERC20.TokenList;
 using NetLiquidityPools.Interface;
 using NetLiquidityPools.Uniswap.V3.Liquidity;
 using NetLiquidityPools.Uniswap.V3.Pool;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -130,11 +131,21 @@ namespace NetLiquidityPools.Uniswap.V3.Yldr
         }
 
 
+        private class TransactionLog
+        {
+            [JsonProperty("address")]
+            public string Address { get; set; } = string.Empty;
+
+            [JsonProperty("topics")]
+            public List<string> Topics { get; set; } = new List<string>();
+            [JsonProperty("data")]
+            public string Data { get; set; } = string.Empty;
+        }
         /// <summary>
         /// Get contracts of leveraged liquidity
         /// </summary>
         /// <returns></returns>
-        public async Task<ILeveragedContract[]?> GetContracts()
+        public async Task<string?> GetLastContractAddress()
         {
 
 
@@ -144,38 +155,48 @@ namespace NetLiquidityPools.Uniswap.V3.Yldr
             var aTransactions = await oClient.GetTransactions(Wallet.PublicKey);
             if( aTransactions == null ) return null;
 
-            IScanTransaction? oFound = aTransactions.FirstOrDefault(p => p.Success &&    
+            IScanTransaction[]? aFound = aTransactions.Where(p => p.Success &&    
                     p.ToAddress != null && p.ToAddress.ToUpper().Equals( Setup.LeverageSetup.MintContract.ToUpper() ) &&
-                    p.Function != null && p.Function.Contains("mint")); 
+                    p.Function != null && p.Function.Contains("mint"))
+                .OrderByDescending(p=> p.DateTime)
+                .ToArray(); 
 
-            if(oFound == null) return null; 
-            var oResult = await oClient.Web3Client.Eth.Transactions.GetTransactionByHash.SendRequestAsync(oFound.TxHash);
-            // oClient.Web3Client.Eth.Blocks..TransactionManager.Account.TransactionManager..Eth.TransactionManager.
+            if(aFound == null || aFound.Length <= 0 ) return null;
 
-            var oResult2 = await oClient.Web3Client.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(oFound.TxHash);
-            if( oResult2 != null && oResult2.Logs != null )
+            string? strFound = null;
+            foreach( var oFound in aFound )
             {
-                if (!(oResult2.Logs is JArray)) return null;
-                JArray aLogs = (JArray)oResult2.Logs;  
-                foreach ( var oLog in aLogs.Children() )
+                var oResult2 = await oClient.Web3Client.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(oFound.TxHash);
+                if (oResult2 != null && oResult2.Logs != null)
                 {
-                    if (!(oLog is JObject)) continue;
-                    JObject oObject = (JObject)oLog;
+                    if (!(oResult2.Logs is JArray)) return null;
 
-                    if( oObject.ContainsKey(TAG_DATA) )
+                    var oLogsJson = JsonConvert.DeserializeObject<List<TransactionLog>>(oResult2.Logs.ToString());
+                    if (oLogsJson == null) continue;
+                    foreach( var oLog in oLogsJson)
                     {
-                        string strData = oObject[TAG_DATA].ToString();
-                        if( strData.StartsWith("0x60806040"))
+                        if( oLog.Topics != null && oLog.Topics.Count == 2 )
                         {
-                            Console.WriteLine("Lohise");
-                        }   
+                            if(oLog.Topics[0] == "0x1cf3b03a6cf19fa2baba4df148e9dcabedea7f8a5c07840e207e5c089be95d3e")
+                            {
+                                
+                                strFound = oLog.Address;
+                                break;
+                            }
+                        }
+                        if (oLog.Address == Setup.LeverageSetup.ContractAddress)
+                        {
+                            Console.WriteLine("Lo encontre");
+                        }
 
                     }
-
-                    Console.WriteLine(oObject.ToString());
+                    if (strFound != null) break;
                 }
+
             }
-            throw new NotImplementedException ();   
+
+            return strFound;
+
         }
 
         public async Task<ILeveragedPositionData?> GetPositionData(string? strContractAddress = null)

@@ -1,7 +1,12 @@
+using Crypto.Exchanges.Cex;
+using CryptoDexCommon.Internal;
 using Nethereum.Contracts.Standards.ENS.ETHRegistrarController.ContractDefinition;
 using Nethereum.Signer;
+using NetLiquidityPools.Bot;
 using NetLiquidityPools.Factory;
 using NetLiquidityPools.Interface;
+using NetLiquidityPools.Interface.Bot;
+using NetLiquidityPools.Interface.Cex;
 using NetLiquidityPools.Uniswap.V3.Liquidity;
 using System.Numerics;
 
@@ -26,6 +31,8 @@ namespace NetLiquidityPools.Test
 
             ILeverageLiquidity oLeveraged = CommonDexFactory.CreateLeveragedLiquidity(oClient.Wallet, oClient.Setup);
 
+            string? strContract = await oLeveraged.GetLastContractAddress();
+
             var oTxFees = await oLeveraged.CollectFees();
             Assert.IsNotNull(oTxFees);
             Assert.IsTrue(oTxFees.Success);
@@ -40,6 +47,27 @@ namespace NetLiquidityPools.Test
 
 
 
+
+        }
+
+
+        [TestMethod]
+        public async Task HedgedLiquidityTest()
+        {
+
+            ICryptoSetup oSetup = TestCommon.CreateSetup();
+            ICexExchange oExchange = CexFactory.CreateExchange(oSetup, ExchangeType.Bingx);
+            CancellationTokenSource oSource = new CancellationTokenSource();    
+            ICommonLogger oLogger = CryptoDexFactory.CreateLogger(oSetup, this.GetType().Name, oSource.Token);
+
+            IHedgedLiquidity oHedged = BotFactory.CreateHedgedLiquidity(oExchange, oSetup, oLogger);
+
+            for( int i = 0; i < 10; i++)
+            {
+                await oHedged.Refresh();
+
+                await Task.Delay(2000);
+            }
 
         }
 

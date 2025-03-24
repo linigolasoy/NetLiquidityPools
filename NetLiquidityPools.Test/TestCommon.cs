@@ -12,13 +12,13 @@ namespace NetLiquidityPools.Test
 {
     internal class TestCommon
     {
-        public const string SETUP_FILE      = "d:/Data/NetLiquidityPools/NetLiquidityPoolsSetup.json";
+        public static string[] SETUP_FILES      = new string[] { "d:/Data/NetLiquidityPools/NetLiquidityPoolsSetup.json", "d:/Data/NetLiquidityPools/NetLiquidityPoolsSetup_Raul.json" };
         public const string OPTIONS_FILE    = "d:/Data/NetLiquidityPools/OptionsSetup.json";
 
 
-        public static ICryptoSetup CreateSetup()
+        public static ICryptoSetup CreateSetup( int nSetup = 0)
         {
-            ICryptoSetup oSetup = CommonDexFactory.CreateSetup(TestCommon.SETUP_FILE);
+            ICryptoSetup oSetup = CommonDexFactory.CreateSetup(TestCommon.SETUP_FILES[nSetup]);
             return oSetup;
         }
         public static ICryptoClient CreateClient()

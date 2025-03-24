@@ -16,5 +16,7 @@ namespace NetLiquidityPools.Interface.Cex
         public Task<ITradingResult<bool>> CancelOrder(IFuturesSymbol oSymbol, string strOrderId);   
 
         public Task<ITradingResult<bool>> ClosePosition(IFuturesPosition oPosition, decimal? nPrice = null);
+
+        public Task<ITradingResult<bool>> SetLeverage(IFuturesSymbol oSymbol, int nLeverage);
     }
 }

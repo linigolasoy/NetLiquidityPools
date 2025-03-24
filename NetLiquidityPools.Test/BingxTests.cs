@@ -71,6 +71,31 @@ namespace NetLiquidityPools.Test
 
 
         [TestMethod]
+        public async Task TransferRaul()
+        {
+            ICryptoSetup oSetup = TestCommon.CreateSetup(1);
+
+            ICexExchange oExchange = CexFactory.CreateExchange(oSetup, ExchangeType.Bingx);
+
+            IFuturesSymbol[] aSymbols = oExchange.SymbolManager.GetAllValues();
+            Assert.IsTrue(aSymbols.Length > 100);
+
+            IFuturesSymbol? oSymbol = aSymbols.FirstOrDefault(p => p.Base == "ETH" && p.Quote == "USDT");
+            Assert.IsNotNull(oSymbol);
+
+
+            string? strAddress = await oExchange.Account.GetDepositAddres("USDT", NetworkType.Arbitrum);
+            Assert.IsNotNull(strAddress);
+
+            IFuturesBalance[]? aBalances = await oExchange.Account.GetBalances();    
+            Assert.IsNotNull(aBalances);
+            Assert.IsTrue(aBalances.Length > 0);
+            IFuturesBalance? oUsdt = aBalances.FirstOrDefault(p => p.Currency == "USDT");
+            Assert.IsNotNull(oUsdt);
+
+        }
+
+        [TestMethod]
         public async Task BingxTransferTest()
         {
             ICryptoSetup oSetup = TestCommon.CreateSetup();

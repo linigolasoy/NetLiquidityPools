@@ -16,11 +16,12 @@ namespace NetLiquidityPools.Factory
             PercentUp = oJson.PercentUp;
             HedgeApiKey = oJson.HedgeApiKey;
             HedgeApiSecret = oJson.HedgeApiSecret;
+            MintContract = oJson.MintContract;
         }
 
         public string MintContract { get; } = string.Empty;
 
-        public string ContractAddress { get; }
+        public string ContractAddress { get; set; } = string.Empty;
 
         public decimal PercentDown { get; }
 

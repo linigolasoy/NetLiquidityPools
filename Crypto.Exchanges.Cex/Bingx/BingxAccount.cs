@@ -87,7 +87,10 @@ namespace Crypto.Exchanges.Cex.Bingx
         public async Task<string?> GetDepositAddres(string strCurrency, NetworkType eType)
         {
             var oResult = await m_oGlobalClient.BingX.SpotApi.Account.GetDepositAddressAsync(strCurrency);
-            if (oResult == null || !oResult.Success || oResult.Data == null) return null;
+            if (oResult == null || !oResult.Success || oResult.Data == null)
+            {
+                return null;
+            }
 
             string strTypeUpper = eType.ToString().ToUpper();   
             var oFound = oResult.Data.Data.FirstOrDefault(p => p.Network.ToUpper() == strTypeUpper); 

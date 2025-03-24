@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,6 +29,10 @@ namespace NetLiquidityPools.Interface
 
         public decimal PriceActual { get; }
 
+        public BigInteger TickActual { get; }
+        public BigInteger TickUpper { get; }
+        public BigInteger TickLower { get; }
+        public BigInteger Liquidity { get; }
         public int TickStep { get; }    
     }
 }

@@ -9,7 +9,7 @@ namespace NetLiquidityPools.Interface
     public interface ILeverageSetup
     {
         public string MintContract { get; } 
-        public string ContractAddress { get; }  
+        public string ContractAddress { get; set; }  
 
         public decimal PercentDown { get; }
         public decimal PercentUp { get; }
